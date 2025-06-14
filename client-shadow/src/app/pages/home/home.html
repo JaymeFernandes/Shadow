@@ -1,0 +1,27 @@
+<div class="max-w-4xl mx-auto flex flex-col gap-6 pt-6">
+  <div class="p-4 bg-zinc-800 flex flex-col gap-4 rounded-lg">
+    <h2 class="text-2xl font-bold">Publicar</h2>
+    <input placeholder="Titulo" type="text" class="bg-zinc-900  px-3 py-2 w-full rounded-lg ">
+    <textarea
+      placeholder="Descrição"
+      class=" w-full h-24 bg-zinc-900 rounded-lg px-3 py-2 resize-none"
+    ></textarea>
+    
+    <div class="flex gap-3">
+      <button class="bg-green-700 w-24 px-3 py-2 rounded-lg">Publicar</button>
+      <button class="bg-red-700 w-24 px-3 py-2 rounded-lg">Limpar</button>
+    </div>
+
+  </div>
+
+  <div>
+    <h2 class="text-xl font-bold pb-2">Para Você</h2>
+    @for (item of posts; track $index)
+    {
+      <app-post [post]="item"></app-post>
+    }
+  </div>
+
+
+</div>
+

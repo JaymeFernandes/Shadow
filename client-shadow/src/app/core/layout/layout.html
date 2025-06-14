@@ -1,0 +1,19 @@
+
+
+<div class="flex flex-col w-screen h-screen max-h-screen">
+  <app-nav-bar></app-nav-bar>
+
+  <div class="flex flex-1 min-h-0">
+    <aside class="w-60 bg-zinc-800 border-r border-zinc-700 p-4 hidden md:block overflow-y-auto overflow-x-hidden">
+      <app-side-bar></app-side-bar>
+    </aside>
+
+    <main class="flex-1 overflow-auto">
+      <ng-content></ng-content>
+    </main>
+
+  </div>
+
+</div>
+
+

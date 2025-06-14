@@ -1,0 +1,74 @@
+<div class="bg-zinc-800 rounded-lg overflow-hidden shadow-lg mb-6 border border-zinc-700">
+ 
+
+  <div class="p-4">
+    <div class="flex items-start">
+      <div class="h-24 w-18 mr-4 rounded overflow-hidden shadow-lg mb-6 border border-zinc-700">
+        <img [src]="post.manga.coverImage" alt="cover">
+      </div>
+
+      <div class="flex-1">
+        <h3 class="text-lg font-semibold hover:text-indigo-400 cursor-pointer">{{post.manga.title}}</h3>
+        <p class="text-gray-400 text-sm mb-1">{{post.manga.author}}</p>
+      </div>
+
+
+      <div class="flex items-center gap-1.5">
+
+
+        @for (item of [1, 2, 3, 4, 5]; track $index)
+        {
+            @if(item < post.manga.rating)
+            {
+              <i-lucide [img]="Star" [size]="12" class="fill-yellow-500 text-yellow-500"></i-lucide>
+            }
+            @else
+            {
+                <i-lucide [img]="Star" [size]="12" class="text-yellow-500"></i-lucide>
+            }
+        }
+
+        <span class="text-zinc-400 text-sm mb-1">{{post.manga.rating}}/5</span>
+      </div>
+    </div>
+
+    <div class=" rounded-lg bg-zinc-900 w-full">
+      <div class="flex flex-col gap-3 items-start p-4">
+        <div class="flex items-center gap-2">
+          <img class="h-8 w-8 border-2 border-zinc-700 rounded-full" [src]="post.author.avatar" alt="Avatar">
+          <h3 class="text-lg font-semibold">{{post.author.name}}</h3>
+        </div>
+        <div class="flex flex-col gap-4  overflow-auto border-t border-zinc-500 py-3.5">
+          <h2 class="text-2xl font-semibold">{{post.author.title}}</h2>
+          <div [innerHTML]="sanitizedHtml()" class="markdown-body w-full max-h-[35rem] pr-32"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-start gap-3 pt-5">
+      <div class="flex items-center gap-1">
+
+        @if (post.userHasLiked)
+        {
+          <i-lucide class="fill-red-500 text-red-500"  [size]="18" [img]="Heart"></i-lucide>
+        }
+        @else
+        {
+          <i-lucide [size]="18" [img]="Heart"></i-lucide>
+        }
+
+        <span class="text-zinc-400">{{post.likes}}</span>
+
+      </div>
+
+      <div class="flex items-center gap-1">
+
+        <i-lucide [size]="18" [img]="MessageCircle"></i-lucide>
+        <span class="text-zinc-400">{{post.comments.length}}</span>
+
+      </div>
+
+      <i-lucide [size]="18" [img]="Share"></i-lucide>
+    </div>
+  </div>
+</div>

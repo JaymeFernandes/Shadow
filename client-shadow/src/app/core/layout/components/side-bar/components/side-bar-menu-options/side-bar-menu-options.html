@@ -1,0 +1,31 @@
+<div
+  [class.pt-4]="includeTitle"
+  [class.border-t]="includeTitle"
+  [class.border-zinc-700]="includeTitle">
+    @if (includeTitle)
+    {
+      <h3 class="text-xs uppercase font-semibold text-gray-500 tracking-wider mb-2 px-3">
+        {{title}}
+      </h3>
+    }
+
+    <ul class="space-x-2">
+      @for (item of options; track $index)
+      {
+        <li>
+          <a
+           [routerLink]="item.index"
+            [class.text-white]="isActive(item.index, item.exact)"
+            [class.bg-indigo-800]="isActive(item.index, item.exact)"
+            [class.text-zinc-400]="!isActive(item.index, item.exact)"
+            [class.hover:bg-zinc-700]="!isActive(item.index, item.exact)"
+            class="flex items-center space-x-3 px-3 py-2 rounded-lg hover:text-white transition-colors w-52">
+
+            <i-lucide [size]="18" [img]="item.icon"></i-lucide>
+            <span>{{item.name}}</span>
+
+          </a>
+        </li>
+      }
+    </ul>
+</div>
