@@ -1,7 +1,12 @@
-<nav class="flex flex-col gap-4">
-    <app-side-bar-menu-options [options]="navItems" [title]="''"></app-side-bar-menu-options>
+<nav class="flex flex-col border-r border-zinc-400 items-center gap-6 bg-zinc-950 h-full w-60 pt-3 border-l border-zinc-800">
+  <div class="flex gap-2.5 items-center select-none">
+    <img class="w-10" src="/icon.svg" alt="icone"/>
+    <h1 class="text-2xl font-bold text-indigo-800">Shadow</h1>
+  </div>
 
-    <app-side-bar-menu-options [options]="userItems" [title]="'Usuário'" [includeTitle]="true"></app-side-bar-menu-options>
+  <app-side-bar-menu-options [options]="navItems" [title]="''"></app-side-bar-menu-options>
 
-    <app-side-bar-menu-options [options]="outItems" [title]="'Outros'" [includeTitle]="true"></app-side-bar-menu-options>
+  <app-side-bar-menu-options [options]="userItems" [title]="'Usuário'" [includeTitle]="true"></app-side-bar-menu-options>
+
+  <app-side-bar-menu-options [options]="outItems" [title]="'Outros'" [includeTitle]="true"></app-side-bar-menu-options>
 </nav>

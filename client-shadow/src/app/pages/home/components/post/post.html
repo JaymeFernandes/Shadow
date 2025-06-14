@@ -1,8 +1,8 @@
-<div class="bg-zinc-800 rounded-lg overflow-hidden shadow-lg mb-6 border border-zinc-700">
- 
+<div class="bg-zinc-800/70 rounded-lg overflow-hidden shadow-lg mb-6 border border-zinc-600">
+
 
   <div class="p-4">
-    <div class="flex items-start">
+    <div class="flex">
       <div class="h-24 w-18 mr-4 rounded overflow-hidden shadow-lg mb-6 border border-zinc-700">
         <img [src]="post.manga.coverImage" alt="cover">
       </div>
@@ -32,10 +32,10 @@
       </div>
     </div>
 
-    <div class=" rounded-lg bg-zinc-900 w-full">
+    <div class=" rounded-lg w-full">
       <div class="flex flex-col gap-3 items-start p-4">
         <div class="flex items-center gap-2">
-          <img class="h-8 w-8 border-2 border-zinc-700 rounded-full" [src]="post.author.avatar" alt="Avatar">
+          <img class="h-11 w-11 border-4 border-indigo-600/20 bg-indigo-800/20 rounded-full" [src]="post.author.avatar" alt="Avatar">
           <h3 class="text-lg font-semibold">{{post.author.name}}</h3>
         </div>
         <div class="flex flex-col gap-4  overflow-auto border-t border-zinc-500 py-3.5">

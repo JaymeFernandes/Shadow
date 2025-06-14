@@ -15,7 +15,7 @@
         <li>
           <a
            [routerLink]="item.index"
-            [class.text-white]="isActive(item.index, item.exact)"
+            [class.text-indigo-500]="isActive(item.index, item.exact)"
             [class.bg-indigo-800]="isActive(item.index, item.exact)"
             [class.text-zinc-400]="!isActive(item.index, item.exact)"
             [class.hover:bg-zinc-700]="!isActive(item.index, item.exact)"
