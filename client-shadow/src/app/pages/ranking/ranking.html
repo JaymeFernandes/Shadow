@@ -1,1 +1,89 @@
-<p>ranking works!</p>
+<div class="flex flex-col gap-10">
+
+  <div class="flex flex-col md:flex-row justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="w-10 h-10 flex items-center justify-center rounded-full bg-indigo-700/40">
+        <i-lucide class="text-indigo-400" [img]="Trophy"></i-lucide>
+      </div>
+
+      <div class="flex flex-col">
+        <h1 class="text-2xl font-bold">Ranking de Usuários</h1>
+        <span class="text-xs text-zinc-400">Veja os melhores usuários da plataforma</span>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3">
+      <div class="bg-zinc-800 px-4 py-2 rounded-lg">
+        <span class="text-xs text-zinc-500 uppercase font-medium block mb-1">Total de Usuários</span>
+        <div class="flex gap-3 items-center">
+          <i-lucide class="text-indigo-400" [size]="20" [img]="Users"></i-lucide>
+          <span>12.500</span>
+        </div>
+      </div>
+
+      <div class="bg-zinc-800 px-4 py-2 rounded-lg">
+        <span class="text-xs text-zinc-500 uppercase font-medium block mb-1">Sua Classificação</span>
+        <div class="flex gap-3 items-center">
+          <i-lucide class="text-indigo-400" [size]="20" [img]="Trophy"></i-lucide>
+          <span>1º</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center gap-6">
+    <h3 class="text-2xl font-bold">Top 3 Usuários</h3>
+
+    <div class="flex gap-6 sm:gap-20 items-center justify-center w-full">
+      @if (ranking.length === 0) {
+        <app-ranking-top-placehoder [top]="2"></app-ranking-top-placehoder>
+        <app-ranking-top-placehoder [top]="1"></app-ranking-top-placehoder>
+        <app-ranking-top-placehoder [top]="3"></app-ranking-top-placehoder>
+      } @else {
+        @for (item of [1, 0, 2]; track $index) {
+          @if (ranking[item]) {
+            @defer {
+              <app-ranking-top [top]="item + 1" [ranking]="ranking[item]"></app-ranking-top>
+            }
+            @placeholder {
+              <app-ranking-top-placehoder [top]="item + 1"></app-ranking-top-placehoder>
+            }
+            @loading (minimum 1s) {
+              <app-ranking-top-placehoder [top]="item + 1"></app-ranking-top-placehoder>
+            }
+          }
+        }
+      }
+    </div>
+  </div>
+
+  <div class="flex flex-col">
+    <div class="flex flex-col sm:flex-row justify-between w-full gap-3">
+      <h3 class="font-bold text-2xl">Classificação Geral</h3>
+      <div class="flex space-x-3">
+        <button class="bg-zinc-800 text-xs rounded-lg p-2 cursor-pointer">Global</button>
+        <button class="bg-zinc-800/30 text-xs rounded-lg p-2 cursor-pointer">Amigos</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="bg-zinc-800/30 rounded-xl border border-zinc-700/30 overflow-hidden">
+    <div class="grid grid-cols-6 sm:grid-cols-10 gap-2 px-4 py-3 bg-zinc-800/70 text-zinc-400 text-sm font-medium">
+      <div class="col-span-1 text-center">#</div>
+      <div class="col-span-4">Usuário</div>
+      <div class="col-span-2 text-center hidden md:block">Nível</div>
+      <div class="col-span-3 text-center">Troféus</div>
+    </div>
+
+    @for (item of ranking; track $index) {
+      @if ($index > 2) {
+        @defer (on viewport) {
+          <app-ranking-top-b [top]="$index" [ranking]="item"></app-ranking-top-b>
+        }
+        @placeholder (minimum 1s) {
+          <app-ranking-top-b-placehoder></app-ranking-top-b-placehoder>
+        }
+      }
+    }
+  </div>
+</div>

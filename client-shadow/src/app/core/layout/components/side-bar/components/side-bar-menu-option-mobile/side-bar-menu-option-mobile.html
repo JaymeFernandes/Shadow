@@ -1,0 +1,10 @@
+<button [routerLink]="option.index" class="flex flex-col items-center justify-center w-20 py-2 transition-colors">
+  <i-lucide
+    [class.text-indigo-400]="isActive(option.index, option.exact)"
+    [size]="16"
+    [img]="option.icon">
+  </i-lucide>
+
+  <span class="text-xs"
+  [class.text-indigo-400]="isActive(option.index, option.exact)">{{option.name}}</span>
+</button>

@@ -1,0 +1,46 @@
+<div
+  class="grid grid-cols-10 gap-2 px-4 py-3 border-zinc-400 bg-zinc-800/20 transition-colors
+    border-t border-t-transparent md:border-t-current"
+>
+  <!-- Ranking number -->
+  <div class="col-span-1 flex items-center justify-center">
+    <span>{{top}}</span>
+  </div>
+
+  <!-- Avatar + Name + Nick -->
+  <div class="col-span-9 flex items-center gap-4 md:col-span-4">
+    <img class="w-10 h-10 rounded-full" [src]="ranking.user.avatar" alt="Avatar">
+    <div class="flex flex-col truncate">
+      <h3 class="font-bold text-lg md:text-xl truncate">{{ranking.user.name}}</h3>
+      <span class="text-xs text-zinc-400 truncate">{{ranking.user.nick}}</span>
+    </div>
+  </div>
+
+  <!-- Nivel -->
+  <div class="hidden md:flex col-span-2 justify-center items-center">
+    <div class="flex gap-1 w-24 h-6 rounded-lg justify-center items-center bg-indigo-700/30 p-1">
+      <i-lucide [size]="15" [img]="Star"></i-lucide>
+      <span class="text-xs">Nivel {{ranking.nivel}}</span>
+    </div>
+  </div>
+
+  <!-- Trophy -->
+  <div class="hidden md:flex col-span-3 justify-center items-center">
+    <div class="flex gap-1 w-20 h-6 rounded-lg justify-center items-center bg-amber-900/30 p-1">
+      <i-lucide class="text-amber-500" [size]="15" [img]="Trophy"></i-lucide>
+      <span class="text-xs">{{ranking.trophy}}</span>
+    </div>
+  </div>
+
+  <!-- Versão móvel: Nivel e Trophy abaixo -->
+  <div class="flex md:hidden col-span-9 gap-4 mt-2 justify-start">
+    <div class="flex gap-1 w-20 h-6 rounded-lg justify-center items-center bg-indigo-700/30 p-1">
+      <i-lucide [size]="15" [img]="Star"></i-lucide>
+      <span class="text-xs">Nivel {{ranking.nivel}}</span>
+    </div>
+    <div class="flex gap-1 w-20 h-6 rounded-lg justify-center items-center bg-amber-900/30 p-1">
+      <i-lucide class="text-amber-500" [size]="15" [img]="Trophy"></i-lucide>
+      <span class="text-xs">{{ranking.trophy}}</span>
+    </div>
+  </div>
+</div>

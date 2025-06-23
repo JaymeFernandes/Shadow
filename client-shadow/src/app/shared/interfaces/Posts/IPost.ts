@@ -1,7 +1,9 @@
 export interface IPost
 {
-  manga: IMangaInformation,
+  manga? : IMangaInformation,
   author: IPostUserAuthor,
+
+  description: string,
 
   likes: number,
   userHasLiked: boolean,
@@ -22,8 +24,6 @@ export interface IPostUserAuthor
 {
   name: string,
   avatar: string,
-  title: string,
-  description: string,
   image? : string
 }
 

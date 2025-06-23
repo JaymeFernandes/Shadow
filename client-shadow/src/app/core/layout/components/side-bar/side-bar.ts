@@ -1,20 +1,22 @@
 import { Component } from '@angular/core';
 
 import { House, Trophy, Telescope, BookMarked, UserRound, Settings, Bot, CalendarDays, Crown, CircleHelp } from 'lucide-angular';
-import { IMenuOption } from '../../../../shared/interfaces/IMenuOptions';
+import { IMenuOption } from '../../../../shared/interfaces/Menu/IMenuOptions';
 import { SideBarMenuOptions } from './components/side-bar-menu-options/side-bar-menu-options';
+import { SideBarMenuOptionMobile } from './components/side-bar-menu-option-mobile/side-bar-menu-option-mobile';
 
 
 
 @Component({
   selector: 'app-side-bar',
   standalone: true,
-  imports: [ SideBarMenuOptions ],
+  imports: [ SideBarMenuOptions, SideBarMenuOptionMobile ],
   templateUrl: './side-bar.html',
   styleUrl: './side-bar.scss'
 })
 export class SideBar {
-  readonly navItems : IMenuOption[] = [
+  readonly navItems : IMenuOption[] =
+  [
     {
       name: 'Início',
       index: '',
@@ -28,15 +30,9 @@ export class SideBar {
       exact: false
     },
     {
-      name: 'Tendências',
+      name: 'Ranking',
       index: 'ranking',
       icon: Trophy,
-      exact: false
-    },
-    {
-      name: 'Lançamentos',
-      index: 'new',
-      icon: CalendarDays,
       exact: false
     }
   ];
@@ -54,12 +50,6 @@ export class SideBar {
       index: 'bookmark',
       icon: BookMarked,
       exact: false
-    },
-    {
-      name: 'Conquistas',
-      index: 'user/badges',
-      icon: Crown,
-      exact: true
     },
     {
       name: 'Configurações',
@@ -82,6 +72,40 @@ export class SideBar {
       index: 'help',
       icon: CircleHelp,
       exact: false
+    }
+  ]
+
+  readonly NaviItemsMobile: IMenuOption[] =
+  [
+    {
+      name: 'Início',
+      index: '',
+      icon: House,
+      exact: true
+    },
+    {
+      name: 'Explorar',
+      index: 'discover',
+      icon: Telescope,
+      exact: false
+    },
+    {
+      name: 'Minha Lista',
+      index: 'bookmark',
+      icon: BookMarked,
+      exact: false
+    },
+    {
+      name: 'Ranking',
+      index: 'ranking',
+      icon: Trophy,
+      exact: false
+    },
+    {
+      name: 'Perfil',
+      index: 'user',
+      icon: UserRound,
+      exact: true
     }
   ]
 }

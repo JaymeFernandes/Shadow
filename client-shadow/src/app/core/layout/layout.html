@@ -1,18 +1,12 @@
 
 
-<div class="flex h-screen bg-zinc-900 text-zinc-100 overflow-hidden">
+<div class="flex flex-col-reverse lg:flex-row h-screen bg-zinc-900 text-zinc-100 overflow-hidden min-h-screen max-h-[100dvh]">
+
   <app-side-bar></app-side-bar>
 
-
-  <div class="flex flex-col flex-1">
-    <app-nav-bar></app-nav-bar>
-
-    <main class="flex-1 overflow-auto px-6">
-      <ng-content></ng-content>
-    </main>
-
-  </div>
-
+  <main class="flex-1 overflow-auto px-4 lg:px-6 lg:py-12 pt-12 pb-32">
+    <ng-content></ng-content>
+  </main>
 </div>
 
 

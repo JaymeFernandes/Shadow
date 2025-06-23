@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IMenuOption } from '../../../../../../shared/interfaces/IMenuOptions';
+import { IMenuOption } from '../../../../../../shared/interfaces/Menu/IMenuOptions';
 import { Router, RouterModule } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 

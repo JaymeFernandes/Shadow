@@ -1,0 +1,45 @@
+<div class="flex flex-col items-center gap-3 sm:gap-6 w-full max-w-[150px] sm:max-w-none">
+  <div class="flex flex-col items-center gap-2 sm:gap-4">
+
+    <img
+      class="rounded-full border border-indigo-700"
+      [class.w-24]="top === 1"
+      [class.h-24]="top === 1"
+      [class.w-16]="top != 1"
+      [class.h-16]="top != 1"
+      [class.sm\:w-36]="top === 1"
+      [class.sm\:h-36]="top === 1"
+      [class.sm\:w-28]="top != 1"
+      [class.sm\:h-28]="top != 1"
+      [src]="ranking.user.avatar"
+      alt="Top {{top}}"
+    />
+
+    <i-lucide
+      [class.text-amber-500]="top === 1"
+      [class.text-slate-200]="top === 2"
+      [class.text-amber-950]="top === 3"
+      [size]="18"
+      [class.sm\:size-24]="true"
+      [img]="Trophy">
+    </i-lucide>
+
+    <h2 class="text-[10px] sm:text-2xl font-semibold text-center">
+      {{ top }}º {{ ranking.user.name }}
+    </h2>
+
+    <span class="text-[10px] sm:text-xs text-zinc-400">{{ ranking.user.nick }}</span>
+
+    <div class="flex flex-row flex-wrap sm:flex-nowrap w-full gap-2 sm:gap-4 justify-center">
+      <div class="flex gap-1 items-center rounded-lg bg-indigo-700/30 px-2 py-1">
+        <i-lucide [size]="13" [img]="Star"></i-lucide>
+        <span class="text-[10px] sm:text-xs">Nível {{ ranking.nivel }}</span>
+      </div>
+
+      <div class="flex gap-1 items-center rounded-lg bg-amber-900/30 px-2 py-1">
+        <i-lucide class="text-amber-500" [size]="13" [img]="Trophy"></i-lucide>
+        <span class="text-[10px] sm:text-xs">{{ ranking.trophy }}</span>
+      </div>
+    </div>
+  </div>
+</div>
