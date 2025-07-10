@@ -3,8 +3,7 @@ using Application.DTOs.Identity;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
-
-namespace Api.Controller.Auth;
+namespace Api.Controllers.Auth;
 
 [Route("api/auth")]
 [Tags("Authentication")]
@@ -39,14 +38,5 @@ public class AuthController : ControllerBase
         };
 
         return BadRequest(problemDetails);
-    }
-
-    [HttpGet("/Account/Login")]
-    public async Task<IActionResult> UnAuthorize()
-    {
-        return Unauthorized(new ProblemDetails
-        {
-            Status = StatusCodes.Status401Unauthorized
-        });
     }
 }

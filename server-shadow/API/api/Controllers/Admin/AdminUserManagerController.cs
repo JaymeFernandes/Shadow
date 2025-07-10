@@ -3,6 +3,7 @@ using Application.DTOs.Admin;
 using Domain.Models.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Extensions;
 
 namespace Api.Controllers.Admin;
 
@@ -19,7 +20,7 @@ public class AdminUserManagerController : ControllerBase
     }
 
     [HttpGet("user")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetById()
     {
         return Ok(new ApiResponse<string>(200));

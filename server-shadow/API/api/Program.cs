@@ -8,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
-
 builder.Services.AddProblemDetailsSetup();
 
 builder.Services
@@ -30,16 +29,18 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseIdentityServer();
+
+app.UseHttpsRedirection();
+
 app.UseRouting();
+app.UseProblemDetails();
+
+app.UseIdentityServer();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 await app.UseAuth();
-
-
-app.UseProblemDetails();
-
 
 app.Run();

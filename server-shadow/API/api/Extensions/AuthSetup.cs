@@ -1,12 +1,14 @@
-﻿using System.Text.Json;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Domain.Models.User;
 using Domain.ObjectPool;
 using Domain.Options;
 using Duende.IdentityServer.Models;
+using Duende.IdentityServer.Services;
 using Infrastructure.Contexts.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -18,16 +20,14 @@ public static class AuthSetup
     {
         var tokenParameters = new TokenValidationParameters()
         {
+            ValidateAudience = true,
+            ValidAudience = "api-shadow",
             ValidateIssuer = true,
             ValidIssuer = "https://localhost:7185",
-            ValidateAudience = true,
-            ValidAudience = "api1",                 
-            ValidateIssuerSigningKey = true,
-            RequireExpirationTime = true,
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero,
         };
-
+        
         services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -35,16 +35,15 @@ public static class AuthSetup
             })
             .AddJwtBearer(options =>
             {
-                options.Authority = "https://localhost:7185"; // IdentityServer URL
-                options.Audience = "api1";
+                options.Authority = "https://localhost:7185";
+                options.Audience = "api-shadow";
+                
+                options.RequireHttpsMetadata = false;
 
-                // Aceita tokens de tipo "JWT" e "at+jwt"
                 options.TokenValidationParameters = tokenParameters;
                 options.TokenValidationParameters.ValidTypes = new[] { "at+jwt", "JWT" };
             });
         
-
-        // Identity (EF + Tokens)
         services.AddIdentityCore<IdentityUser>(options =>
             {
                 options.Password.RequireDigit = true;
@@ -61,50 +60,14 @@ public static class AuthSetup
         
         services.AddScoped<SignInManager<IdentityUser>>();
 
-        services.ConfigureApplicationCookie(options =>
-        {
-            options.Events.OnRedirectToLogin = context =>
-            {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                context.Response.ContentType = "application/json";
-
-                var problem = new ProblemDetails
-                {
-                    Status = StatusCodes.Status401Unauthorized,
-                    Title = "Unauthorized",
-                    Type = "https://httpstatuses.com/401"
-                };
-
-                var json = JsonSerializer.Serialize(problem);
-
-                return context.Response.WriteAsync(json);
-            };
-            
-            options.Events.OnRedirectToAccessDenied = context =>
-            {
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                context.Response.ContentType = "application/json";
-
-                var problem = new ProblemDetails
-                {
-                    Status = StatusCodes.Status403Forbidden,
-                    Title = "Forbidden",
-                    Type = "https://httpstatuses.com/403"
-                };
-
-                var json = JsonSerializer.Serialize(problem);
-
-                return context.Response.WriteAsync(json);
-            };
-        });
-
-        // IdentityServer (Duende)
         services.AddIdentityServer(options =>
             {
                 options.IssuerUri = "https://localhost:7185";
             })
             .AddAspNetIdentity<IdentityUser>()
+            .AddProfileService<ProfileService>()
             .AddInMemoryClients(IdentityServerConfig.Clients)
+            .AddInMemoryApiResources(IdentityServerConfig.ApiResources)
             .AddInMemoryApiScopes(IdentityServerConfig.ApiScopes)
             .AddInMemoryIdentityResources(IdentityServerConfig.IdentityResources)
             .AddOperationalStore(options =>
@@ -115,13 +78,14 @@ public static class AuthSetup
             })
             .AddDeveloperSigningCredential();
 
+        
         // Authorization policy for scope "api1"
-        services.AddAuthorization(options =>
-            options.AddPolicy("ApiScope", policy =>
-            {
-                policy.RequireAuthenticatedUser();
-                policy.RequireClaim("scope", "api1");
-            }));
+        // services.AddAuthorization(options =>
+        //     options.AddPolicy("ApiScope", policy =>
+        //     {
+        //         policy.RequireAuthenticatedUser();
+        //         policy.RequireClaim("scope", "api-shadow");
+        //     }));
 
         return services;
     }
@@ -182,6 +146,15 @@ public static class AuthSetup
 
 public static class IdentityServerConfig
 {
+    public static IEnumerable<ApiResource> ApiResources =>
+    [
+        new ApiResource("api-shadow", "Main API")
+        {
+            Scopes = { "api-shadow" }
+        }
+    ];
+
+    
     public static IEnumerable<IdentityResource> IdentityResources =>
         new IdentityResource[]
         {
@@ -192,24 +165,69 @@ public static class IdentityServerConfig
         };
 
     public static IEnumerable<ApiScope> ApiScopes =>
-        new ApiScope[]
-        {
-            new ApiScope("api1", "Main API"),
-        };
+    [
+        new ApiScope("api-shadow", "Main API")
+    ];
 
     public static IEnumerable<Client> Clients =>
-        new Client[]
-        {
-            new Client
+    [
+        new Client
             {
                 ClientId = "api_client",
                 AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                 RequireClientSecret = false,
-                AllowedScopes = { "api1", "openid", "profile", "email", "roles", "offline_access" },
+                AllowedScopes = { "api-shadow", "openid", "profile", "email", "roles", "offline_access" },
                 AllowOfflineAccess = true,
                 AccessTokenLifetime = 3600,
                 RefreshTokenExpiration = TokenExpiration.Sliding,
-                SlidingRefreshTokenLifetime = 2592000
+                SlidingRefreshTokenLifetime = 2592000,
+                
+                AccessTokenType = AccessTokenType.Jwt,
+                AlwaysIncludeUserClaimsInIdToken = true
             }
+    ];
+}
+
+public class ProfileService : IProfileService
+{
+    private readonly UserManager<IdentityUser> _userManager;
+
+    public ProfileService(UserManager<IdentityUser> userManager)
+    {
+        _userManager = userManager;
+    }
+    
+    public async Task GetProfileDataAsync(ProfileDataRequestContext context)
+    {
+        var userId = context.Subject?.FindFirst("sub")?.Value;
+        if (userId == null) return;
+
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return;
+
+        var userClaims = new List<Claim>
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email ?? "")
         };
+
+        var roles = await _userManager.GetRolesAsync(user);
+        userClaims.AddRange(roles.Select(role => new Claim("role", role)));
+
+        context.IssuedClaims.AddRange(userClaims);
+    }
+
+    public async Task IsActiveAsync(IsActiveContext context)
+    {
+        var userId = context.Subject?.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            context.IsActive = false;
+            return;
+        }
+        
+        var user = await _userManager.FindByIdAsync(userId);
+        context.IsActive = user != null;
+    }
 }

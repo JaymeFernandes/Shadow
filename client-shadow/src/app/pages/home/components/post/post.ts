@@ -25,18 +25,18 @@ export class Post {
   constructor(private sanitizer: DomSanitizer)
   {
     afterNextRender(() => {
+
       marked.setOptions({
         gfm: true,
         breaks: true
       });
 
-      // Converte o Markdown para HTML
+      console.log(this.post.manga?.title)
+
       const rawHtml = marked.parse(this.post.description);
 
-      // Limita o número de imagens no HTML
       const limitedHtml = this.limitImagesInHtml(rawHtml.toString(), 4);
 
-      // Sanitiza o HTML para remover tags e atributos perigosos
       const safeHtml = DOMPurify.sanitize(limitedHtml, {
         ALLOWED_TAGS: [
           'p', 'br', 'strong', 'em', 'b', 'i', 'u', 'del', 's',
@@ -49,7 +49,6 @@ export class Post {
         FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover', 'class', 'style']
       });
 
-      // Aplica classes CSS fixas aos elementos HTML
       const styledHtml = safeHtml
         .replace(/<img\b/g, `<img class="w-full max-w-full max-h-[400px] rounded-xl mb-4 object-contain h-auto"`)
         .replace(/<a\b/g, `<a class="text-indigo-400 hover:text-indigo-300 break-words"`)
@@ -67,11 +66,8 @@ export class Post {
         .replace(/<pre\b/g, `<pre class="bg-gray-900 p-4 rounded overflow-x-auto mb-4"`)
         .replace(/<hr\s*\/?>/g, `<hr class="border-gray-700 my-6" />`);
 
-
-      // Remove quebras de linha consecutivas
       const cleanedHtml = styledHtml.replace(/(<br\s*\/?>\s*){2,}/g, '<br/>');
 
-      // Define o HTML sanitizado e estilizado
       this.sanitizedHtml.set(this.sanitizer.bypassSecurityTrustHtml(cleanedHtml));
 
     })
