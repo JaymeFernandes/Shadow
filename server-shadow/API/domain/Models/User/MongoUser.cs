@@ -7,7 +7,7 @@ public class MongoUser
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
-    public string? Id { get; set; }
+    public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
 
     [BsonElement("public_id")]
     public string Code { get; set; } = string.Empty;
@@ -29,11 +29,7 @@ public class MongoUser
     public string? AvatarUrl { get; set; }
 
     [BsonElement("is_private")]
-    public bool isPrivate { get; set; }
-
-    [BsonElement("favorites")]
-    [BsonIgnoreIfNull]
-    public ICollection<MongoFavorite>? Favorites { get; set; }
+    public bool IsPrivate { get; set; }
 
     [BsonElement("cached_at")]
     public DateTime CachedAt { get; set; } = DateTime.UtcNow;

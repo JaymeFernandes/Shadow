@@ -9,11 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Duende.IdentityServer" Version="7.2.4" />
-    <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="7.2.4" />
-    <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="7.2.4" />
-    <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="7.2.4" />
-    <PackageReference Include="Duende.IdentityServer.Storage" Version="7.2.4" />
+    <PackageReference Include="AWSSDK.S3" Version="4.0.5.1" />
     <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
@@ -32,7 +28,16 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="3.4.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="OpenIddict" Version="7.0.0" />
+    <PackageReference Include="OpenIddict.AspNetCore" Version="7.0.0" />
+    <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="7.0.0" />
+    <PackageReference Include="OpenIddict.Server" Version="7.0.0" />
+    <PackageReference Include="OpenIddict.Validation" Version="7.0.0" />
+    <PackageReference Include="OpenIddict.Validation.AspNetCore" Version="7.0.0" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.5.3" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,7 +47,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Admin\" />
+    <Folder Include="Controllers\file\" />
   </ItemGroup>
 
 </Project>

@@ -1,11 +1,10 @@
 <nav class="w-full">
-  <!-- Sidebar lateral fixa no desktop (lg+) -->
   <div
     class="hidden lg:flex flex-col border-r items-center gap-6 bg-zinc-950 h-screen w-60 pt-3 border-l border-zinc-800 overflow-auto"
   >
     <div class="flex gap-2.5 items-center select-none">
       <img class="w-10" src="/icon.svg" alt="icone" />
-      <h1 class="text-2xl font-bold text-indigo-800">Shadow</h1>
+      <h1 class="text-2xl font-bold text-indigo-800">AniConnect</h1>
     </div>
 
     <app-side-bar-menu-options [options]="navItems" [title]="''"></app-side-bar-menu-options>
@@ -22,8 +21,6 @@
       [includeTitle]="true"
     ></app-side-bar-menu-options>
   </div>
-
-  <!-- Menu fixo rodapé no mobile (lg-) -->
   <div
     class="fixed bottom-0 left-0 right-0 lg:hidden h-20 border-t border-zinc-700 bg-zinc-950 flex items-center justify-center z-50"
   >

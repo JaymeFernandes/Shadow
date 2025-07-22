@@ -1,13 +1,16 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using Domain.Models.User.Shared;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Domain.Models.User;
 
 public class MongoFavorite
 {
-    [BsonElement("work")]
-    public int Work { get; set; }
+    [BsonElement("work")] 
+    public string Work { get; set; } = string.Empty;
 
     [BsonElement("chapters")]
-    [BsonIgnoreIfNullAttribute]
-    public ICollection<MongoChapters>? Chapters { get; set; }
+    public ICollection<string>? Chapters { get; set; }
+
+    [BsonElement("category")] 
+    public Favorite Category { get; set; } = Favorite.Favorite;
 }

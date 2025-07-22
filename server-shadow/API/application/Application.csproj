@@ -10,4 +10,8 @@
     <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.5.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\domain\Domain.csproj" />
+  </ItemGroup>
+
 </Project>

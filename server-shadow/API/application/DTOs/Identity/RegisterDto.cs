@@ -15,16 +15,15 @@ public class RegisterDto
 
         [EmailAddress, Required, MaxLength(120)]
         public string Email { get; set; }
-
-
-
+        
+        
         [Required, MaxLength(50), MinLength(8)]
         public string Password { get; set; }
     }
 
     public class Response
     {
-        [JsonIgnore]
+        // [JsonIgnore]
         public string EmailCode {  get; set; } = string.Empty;
 
         public bool Succeeded { get; set; }

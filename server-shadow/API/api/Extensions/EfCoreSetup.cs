@@ -14,6 +14,7 @@ public static class EfCoreSetup
         services.AddDbContext<AppIdentityContext>(x =>
         {
             x.UseNpgsql(configuration["Connections:PostgreSql:Identity"]);
+            x.UseOpenIddict();
         });
 
         services.AddDbContext<CatalogAppContext>(x =>

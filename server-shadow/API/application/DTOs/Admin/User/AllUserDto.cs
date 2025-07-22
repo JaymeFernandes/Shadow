@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Application.DTOs.Admin;
+namespace Application.DTOs.Admin.User;
 
 public class AllUserDto
 {
@@ -8,7 +8,7 @@ public class AllUserDto
     {
         public int Page { get; set; }
         public int PageSize { get; set; }
-        public string Search { get; set; } = string.Empty;
+        public string? Search { get; set; }
     }
 
     public class Response
@@ -17,33 +17,27 @@ public class AllUserDto
         
         public class User
         {
-            public Guid Id { get; set; }
-        
+            public string? Id { get; set; }
             public string? AvatarUrl { get; set; }
-        
             public string Display { get; set; } = string.Empty;
-        
             public string Name { get; set; } = string.Empty;
-        
             public string Lang { get; set; } = string.Empty;
-
+            
             public bool IsPrivate { get; set; } = false;
-        
+            
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public string? Email { get; set; }
-        
-            public string? Phone { get; set; }
-        
+            public bool IsEmailVerified { get; set; } = false;
+            
             public DateTime Created { get; set; }
-            public DateTime LastLoginAt { get; set; }
-        
-            public bool EmailConfirmed { get; set; }
-        
+            public DateTime LastLogin { get; set; }
+            
             [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public ICollection<string>? Roles { get; set; }
-        
+            
             [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public ICollection<Favorite>? Favorites { get; set; }
-        
+            
             public class Favorite
             {
                 public int Id { get; set; }

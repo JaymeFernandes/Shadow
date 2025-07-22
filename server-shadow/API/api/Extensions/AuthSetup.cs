@@ -1,16 +1,13 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Domain.Models.User;
+﻿using Domain.Models.User;
+using Domain.Models.User.Shared;
 using Domain.ObjectPool;
 using Domain.Options;
-using Duende.IdentityServer.Models;
-using Duende.IdentityServer.Services;
 using Infrastructure.Contexts.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OpenIddict.Abstractions;
+using OpenIddict.Validation.AspNetCore;
 
 namespace Api.Extensions;
 
@@ -18,90 +15,95 @@ public static class AuthSetup
 {
     public static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
     {
-        var tokenParameters = new TokenValidationParameters()
-        {
-            ValidateAudience = true,
-            ValidAudience = "api-shadow",
-            ValidateIssuer = true,
-            ValidIssuer = "https://localhost:7185",
-            ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero,
-        };
-        
-        services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.Authority = "https://localhost:7185";
-                options.Audience = "api-shadow";
-                
-                options.RequireHttpsMetadata = false;
-
-                options.TokenValidationParameters = tokenParameters;
-                options.TokenValidationParameters.ValidTypes = new[] { "at+jwt", "JWT" };
-            });
-        
-        services.AddIdentityCore<IdentityUser>(options =>
-            {
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 8;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireNonAlphanumeric = false;
-                options.User.RequireUniqueEmail = true;
-                options.SignIn.RequireConfirmedEmail = true;
-            })
-            .AddRoles<IdentityRole>()
+        services.AddIdentity<IdentityUser, IdentityRole>()
             .AddEntityFrameworkStores<AppIdentityContext>()
             .AddDefaultTokenProviders();
-        
-        services.AddScoped<SignInManager<IdentityUser>>();
 
-        services.AddIdentityServer(options =>
+        services.AddOpenIddict()
+            .AddCore(options =>
             {
-                options.IssuerUri = "https://localhost:7185";
+                options.UseEntityFrameworkCore()
+                    .UseDbContext<AppIdentityContext>();
             })
-            .AddAspNetIdentity<IdentityUser>()
-            .AddProfileService<ProfileService>()
-            .AddInMemoryClients(IdentityServerConfig.Clients)
-            .AddInMemoryApiResources(IdentityServerConfig.ApiResources)
-            .AddInMemoryApiScopes(IdentityServerConfig.ApiScopes)
-            .AddInMemoryIdentityResources(IdentityServerConfig.IdentityResources)
-            .AddOperationalStore(options =>
+            .AddServer(options =>
             {
-                options.ConfigureDbContext = b =>
-                    b.UseNpgsql(configuration["Connections:PostgreSql:Identity"],
-                        sql => sql.MigrationsAssembly("Api"));
-            })
-            .AddDeveloperSigningCredential();
+                options.SetTokenEndpointUris("connect/token");
+                
+                options.AllowClientCredentialsFlow()
+                    .AllowRefreshTokenFlow();
 
+                options.AllowPasswordFlow()
+                    .AllowRefreshTokenFlow();
+
+                options.AddDevelopmentEncryptionCertificate()
+                    .AddDevelopmentSigningCertificate()
+                    .DisableAccessTokenEncryption();
+
+                options.UseAspNetCore()
+                    .EnableTokenEndpointPassthrough()
+                    .EnableAuthorizationEndpointPassthrough()
+                    .EnableEndSessionEndpointPassthrough()
+                    .DisableTransportSecurityRequirement();
+
+                options.SetAccessTokenLifetime(TimeSpan.FromHours(1));
+                options.SetRefreshTokenLifetime(TimeSpan.FromDays(30));
+            });
         
-        // Authorization policy for scope "api1"
-        // services.AddAuthorization(options =>
-        //     options.AddPolicy("ApiScope", policy =>
-        //     {
-        //         policy.RequireAuthenticatedUser();
-        //         policy.RequireClaim("scope", "api-shadow");
-        //     }));
+        services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            
+        })
+        .AddJwtBearer(optons =>
+        {
+            optons.Authority = "https://localhost:7185";
+            optons.Audience = "api-shadow";
+            
+            optons.RequireHttpsMetadata = false;
+        
+            optons.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = true,
+                ValidateIssuer = true,
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.Zero
+            };
+        });
 
         return services;
     }
-
+    
+    
+    
     public static async Task UseAuth(this WebApplication app)
     {
         var users = app.Configuration.GetSection("Users").Get<List<UserSettings>>();
 
         using var scoped = app.Services.CreateScope();
+
+        var appManager = scoped.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
+        var scopeManager = scoped.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
+        
         var roleManager = scoped.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = scoped.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
         var mongoPool = scoped.ServiceProvider.GetRequiredService<MongoPool>();
+        
+        foreach (var value in IdentityServerConfiguration.Applications)
+        {
+            if (await appManager.FindByClientIdAsync(value.ClientId!) is null)
+                await appManager.CreateAsync(value);
+        }
 
-        string[] roles = Enum.GetNames(typeof(Roles));
+        foreach (var value in IdentityServerConfiguration.Scopes)
+        {
+            if(await scopeManager.FindByNameAsync(value.Name!) is null)
+                await scopeManager.CreateAsync(value);
+        }
 
-        foreach (var role in roles)
+        foreach (var role in Enum.GetNames(typeof(Roles)))
         {
             if (!await roleManager.RoleExistsAsync(role))
             {
@@ -134,7 +136,7 @@ public static class AuthSetup
                     Name = user.Name,
                     Lang = "en",
                     LastLoginAt = DateTime.Now,
-                    isPrivate = false,
+                    IsPrivate = false,
                     CachedAt = DateTime.Now
                 };
 
@@ -142,92 +144,48 @@ public static class AuthSetup
             }
         }
     }
-}
 
-public static class IdentityServerConfig
-{
-    public static IEnumerable<ApiResource> ApiResources =>
-    [
-        new ApiResource("api-shadow", "Main API")
-        {
-            Scopes = { "api-shadow" }
-        }
-    ];
-
-    
-    public static IEnumerable<IdentityResource> IdentityResources =>
-        new IdentityResource[]
-        {
-            new IdentityResources.OpenId(),
-            new IdentityResources.Profile(),
-            new IdentityResources.Email(),
-            new IdentityResource("roles", new[] { "role" })
-        };
-
-    public static IEnumerable<ApiScope> ApiScopes =>
-    [
-        new ApiScope("api-shadow", "Main API")
-    ];
-
-    public static IEnumerable<Client> Clients =>
-    [
-        new Client
+    public static class IdentityServerConfiguration
+    {
+        public static OpenIddictApplicationDescriptor[] Applications =>
+        [
+            new()
             {
-                ClientId = "api_client",
-                AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                RequireClientSecret = false,
-                AllowedScopes = { "api-shadow", "openid", "profile", "email", "roles", "offline_access" },
-                AllowOfflineAccess = true,
-                AccessTokenLifetime = 3600,
-                RefreshTokenExpiration = TokenExpiration.Sliding,
-                SlidingRefreshTokenLifetime = 2592000,
-                
-                AccessTokenType = AccessTokenType.Jwt,
-                AlwaysIncludeUserClaimsInIdToken = true
+                ClientId = "api-shadow",
+                DisplayName = "API Shadow",
+                Permissions =
+                {
+                    OpenIddictConstants.Permissions.Endpoints.Token,
+                    OpenIddictConstants.Permissions.GrantTypes.Password,
+                    OpenIddictConstants.Permissions.GrantTypes.RefreshToken,
+                    OpenIddictConstants.Scopes.OpenId,
+                    OpenIddictConstants.Scopes.Email,
+                    OpenIddictConstants.Scopes.OfflineAccess,
+                    OpenIddictConstants.Permissions.Prefixes.Scope + "api-shadow"
+                }
             }
-    ];
-}
+        ];
 
-public class ProfileService : IProfileService
-{
-    private readonly UserManager<IdentityUser> _userManager;
-
-    public ProfileService(UserManager<IdentityUser> userManager)
-    {
-        _userManager = userManager;
-    }
-    
-    public async Task GetProfileDataAsync(ProfileDataRequestContext context)
-    {
-        var userId = context.Subject?.FindFirst("sub")?.Value;
-        if (userId == null) return;
-
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null) return;
-
-        var userClaims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email ?? "")
-        };
-
-        var roles = await _userManager.GetRolesAsync(user);
-        userClaims.AddRange(roles.Select(role => new Claim("role", role)));
-
-        context.IssuedClaims.AddRange(userClaims);
-    }
-
-    public async Task IsActiveAsync(IsActiveContext context)
-    {
-        var userId = context.Subject?.FindFirst("sub")?.Value;
-
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            context.IsActive = false;
-            return;
-        }
-        
-        var user = await _userManager.FindByIdAsync(userId);
-        context.IsActive = user != null;
+        public static OpenIddictScopeDescriptor[] Scopes =>
+        [
+            new()
+            {
+                Name = "api-shadow",
+                DisplayName = "API Shadow",
+                Resources =
+                {
+                    "api-shadow"
+                }
+            },
+            new()
+            {
+                Name = "roles",
+                DisplayName = "roles",
+                Resources = { "role" }
+            }
+        ];
     }
 }
+
+
+

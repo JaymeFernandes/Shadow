@@ -1,13 +1,13 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Domain.Models.User;
+namespace Domain.Models.User.Relations;
 
 public class MongoRelationship
 {
     [BsonId]
     [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
-    public string Id { get; set; } = string.Empty;
+    public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
 
     [BsonElement("user1")]
     [BsonRepresentation(BsonType.ObjectId)]
