@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@rxweb/reactive-form-validators": "^13.0.1"
+  }
+}

@@ -92,7 +92,7 @@ Contribuições são bem-vindas! Mesmo sendo um projeto educacional, sugestões 
 5. Abra um Pull Request
 
 ## 📜 Licença
-[MIT]()
+[MIT](LICENSE)
 
 ## ❗ Aviso legal:
 

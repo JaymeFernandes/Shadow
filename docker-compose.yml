@@ -42,3 +42,5 @@ volumes:
   postgresql_data:
   minio_data:
 
+
+
