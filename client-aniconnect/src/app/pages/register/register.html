@@ -89,13 +89,16 @@
           Confirmar senha
         </label>
 
-        @if(confirmPassword?.valid && (confirmPassword?.dirty || confirmPassword?.touched)) {
+        @if(confirmPassword?.invalid && (confirmPassword?.dirty || confirmPassword?.touched)) {
           <div class="text-red-400 text-sm mt-2 ml-1">
             @if(confirmPassword.errors?.['required']) {
               <div>O campo é obrigatório.</div>
             }
-            @else {
+            @else if(confirmPassword.errors?.['passwordMismatch']) {
               <div>As duas senhas devem ser iguais</div>
+            }
+            @else {
+              <div>Senha está insegura</div>
             }
           </div>
         }

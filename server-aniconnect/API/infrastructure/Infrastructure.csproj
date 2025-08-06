@@ -12,6 +12,7 @@
     <PackageReference Include="EFCore.BulkExtensions.MIT.PostgreSql" Version="8.19.0" />
     <PackageReference Include="EFCore.BulkExtensions.PostgreSql" Version="9.0.1" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.7.0" />
+    <PackageReference Include="MeiliSearch" Version="0.16.0" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.6" />
@@ -31,6 +32,10 @@
   <ItemGroup>
     <ProjectReference Include="..\application\Application.csproj" />
     <ProjectReference Include="..\domain\Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Mappings\Catalog\" />
   </ItemGroup>
 
 </Project>

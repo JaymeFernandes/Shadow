@@ -5,40 +5,13 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Insira o token JWT no formato: Bearer {seu token aqui}"
-    });
-
-    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-    {
-        {
-            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-            {
-                Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                {
-                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
-    });
-    
-    options.CustomSchemaIds(type => type.FullName);
-});
-
-builder.Services.AddProblemDetailsSetup();
 
 builder.Services
+    .AddSwaggerSetup()
+    .AddProblemDetailsSetup()
+    .AddMeilisearchSetup(builder.Configuration)
     .AddS3Setup(builder.Configuration)
     .AddAuth(builder.Configuration)
     .AddMongoDbSetup(builder.Configuration)
@@ -52,16 +25,25 @@ app.UseCors(x => x
     .AllowAnyMethod()
     .AllowAnyHeader());
 
+app.UseHttpsRedirection();
+app.UseRouting();
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwagger(options =>
+    {
+        options.RouteTemplate = "/openapi/{documentName}.json";
+    });
+    
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "Api documentation");
+    });
+    
+    
+    app.MapScalarApiReference();
 }
 
-
-app.UseHttpsRedirection();
-
-app.UseRouting();
 app.UseProblemDetails();
 
 app.UseAuthentication();

@@ -52,8 +52,13 @@ export class Register implements OnInit {
       username: new FormControl('', [ Validators.minLength(4), Validators.required ]),
       email: new FormControl('', [ Validators.email, Validators.required ]),
       password: new FormControl('', [  Validators.required, Validators.minLength(8), Validators.maxLength(30), passwordValidator() ]),
-      confirmPassword: new FormControl('', [ Validators.required, matchPasswords('password', 'confirmPassword') ])
+      confirmPassword: new FormControl('', [ Validators.required, matchPasswords('password'), passwordValidator() ])
     });
+
+    this.registerForm.get('password')?.valueChanges.subscribe(() => {
+      this.registerForm.get('confirmPassword')?.updateValueAndValidity();
+    });
+
   }
 
   submit(){

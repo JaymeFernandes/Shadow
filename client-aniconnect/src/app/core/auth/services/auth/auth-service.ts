@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { catchError, tap, throwError } from 'rxjs';
 import { ApiResponse, ProblemDetails } from '../../../../shared/interfaces/IApiResponse';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class AuthService {
   private readonly Refresh_Key = 'refresh_token';
 
 
-  constructor(private http: HttpClient, private route: Router, private session: SessionService) { }
+  constructor(private http: HttpClient, private route: Router, private session: SessionService, private cookie : CookieService) { }
 
   register(username: string, nickname: string, email: string, password: string) : Observable<ApiResponse<any> | ProblemDetails>
   {
@@ -55,10 +56,15 @@ export class AuthService {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     }).pipe<any>(
       tap(response => {
-        localStorage.setItem(this.Token_Key, response.access_token);
-        localStorage.setItem(this.Refresh_Key, response.refresh_token)
+        this.cookie.set(this.Token_Key, response.access_token, {
+          path: '/',
+          expires: 1 / 24
+        });
+        this.cookie.set(this.Refresh_Key, response.refresh_token, {
+          path: '/'
+        })
 
-        this.setSession();
+        this.initSession();
       })
     );
   }
@@ -81,33 +87,41 @@ export class AuthService {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     }).pipe<any>(
       tap(response => {
-        localStorage.setItem(this.Token_Key, response.access_token);
-        localStorage.setItem(this.Refresh_Key, response.refresh_token)
+        this.cookie.set(this.Token_Key, response.access_token, {
+          path: '/',
+          expires: 1 / 24
+        });
+        this.cookie.set(this.Refresh_Key, response.refresh_token, {
+          path: '/'
+        })
 
 
-        this.setSession();
+        this.initSession();
       })
     );
   }
 
   logout(){
-    sessionStorage.removeItem(this.Token_Key);
-    localStorage.removeItem(this.Refresh_Key);
+    this.cookie.delete(this.Token_Key);
+    this.cookie.delete(this.Refresh_Key);
 
     this.route.navigate(['/login'])
   }
 
   get token() : string | null{
-    return localStorage.getItem(this.Token_Key);
+    return this.cookie.get(this.Token_Key);
   }
 
   get refreshToken() : string | null{
-    return localStorage.getItem(this.Refresh_Key);
+    return this.cookie.get(this.Refresh_Key);
   }
 
-  private setSession()
+  initSession()
   {
     var token = this.token;
+
+    if(!token)
+      return;
 
     var session = this.http.get<ISession>(`${this.urlBase}api/users/me`, {
       headers: { 'Authorization': `Bearer ${token}` }

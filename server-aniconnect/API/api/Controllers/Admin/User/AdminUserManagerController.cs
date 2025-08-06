@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using OpenIddict.Abstractions;
 
-namespace Api.Controllers.Admin;
+namespace Api.Controllers.Admin.User;
 
 
 [ApiController]

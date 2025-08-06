@@ -5,7 +5,7 @@ namespace Domain.Models.User;
 
 public class MongoFavorite
 {
-    [BsonElement("work")] 
+    [BsonElement("content")] 
     public string Work { get; set; } = string.Empty;
 
     [BsonElement("chapters")]

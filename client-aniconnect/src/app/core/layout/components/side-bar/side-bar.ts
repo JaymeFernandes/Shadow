@@ -27,10 +27,6 @@ export class SideBar {
         this.isLoggedIn.set(x !== null);
       }
     });
-
-    afterNextRender(() => {
-      session.loadFromStorage();
-    })
   }
 
 
@@ -38,7 +34,7 @@ export class SideBar {
   [
     {
       name: 'Início',
-      index: '',
+      index: 'feed',
       icon: House,
       exact: true
     },

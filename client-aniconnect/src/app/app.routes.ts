@@ -1,41 +1,46 @@
-import { Component } from '@angular/core';
 import { Routes } from '@angular/router';
-import { Home } from './pages/home/home';
+import { Feed } from './pages/feed/feed';
 import { Discover } from './pages/discover/discover';
 import { Ranking } from './pages/ranking/ranking';
 import { LatestReleases } from './pages/latest-releases/latest-releases';
 import { Login } from './pages/login/login';
 import { Register } from './pages/register/register';
+import { Home } from './pages/home/home';
 //development
 export const routes: Routes = [
   {
     path: '',
     component: Home,
-    title: 'Shadow - Home'
+    title: 'Ani Connect'
+  },
+  {
+    path: 'feed',
+    component: Feed,
+    title: 'Ani Connect - Home'
   },
   {
     path: 'discover',
     component: Discover,
-    title: 'Shadow - Explorar'
+    title: 'Ani Connect - Explorar'
   },
   {
     path: 'ranking',
     component: Ranking,
-    title: 'Shadow - Melhores'
+    title: 'Ani Connect - Melhores'
   },
   {
     path: 'latest-releases',
     component: LatestReleases,
-    title: 'Shadow - Lançamentos'
+    title: 'Ani Connect - Lançamentos'
   },
   {
     path: 'login',
     component: Login,
-    title: 'Shadow - Login'
+    title: 'Ani Connect - Login'
   },
   {
     path: 'register',
     component: Register,
-    title: 'Shadow - register'
+    title: 'Ani Connect - register'
   }
 ];

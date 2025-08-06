@@ -7,7 +7,7 @@ export function passwordValidator(): ValidatorFn {
     const hasUpperCase = /[A-Z]/.test(value);
     const hasLowerCase = /[a-z]/.test(value);
     const hasNumber = /[0-9]/.test(value);
-    const hasSpecialChar = /[\W_]/.test(value); // includes special characters like !@#$%, etc.
+    const hasSpecialChar = /[\W_]/.test(value);
 
     const valid = hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
 
@@ -15,13 +15,16 @@ export function passwordValidator(): ValidatorFn {
   };
 }
 
-export function matchPasswords(passwordKey: string, confirmPasswordKey: string): ValidatorFn {
-  return (group: AbstractControl): ValidationErrors | null => {
-    const password = (group.get(passwordKey)?.value || '').trim();
-    const confirmPassword = (group.get(confirmPasswordKey)?.value || '').trim();
+
+
+export function matchPasswords(passwordKey: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.parent) return null;
+
+    const password = control.parent.get(passwordKey)?.value;
+    const confirmPassword = control.value;
 
     if (password !== confirmPassword) {
-      group.get(confirmPasswordKey)?.setErrors({ passwordMismatch: true });
       return { passwordMismatch: true };
     }
 

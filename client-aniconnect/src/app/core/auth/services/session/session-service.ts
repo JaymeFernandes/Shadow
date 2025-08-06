@@ -16,23 +16,14 @@ export class SessionService {
 
   constructor() { }
 
-  public loadFromStorage(): ISession | null {
-    const data = localStorage.getItem(this.storageKey);
-
-    this._session$.next(data ? JSON.parse(data) : null)
-
-    return data ? JSON.parse(data) : null;
-  }
 
   setSession(session: ISession)
   {
-    localStorage.setItem(this.storageKey, JSON.stringify(session));
     this._session$.next(session);
   }
 
   clearSession()
   {
-    localStorage.removeItem(this.storageKey);
     this._session$.next(null);
   }
 

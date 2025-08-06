@@ -3,6 +3,7 @@ import { Component, signal, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { LucideAngularModule, Eye, EyeOff } from 'lucide-angular';
 import { AuthService } from '../../core/auth/services/auth/auth-service';
+import { passwordValidator } from '../../shared/Validators/PasswordValidator';
 
 @Component({
   selector: 'app-login',
@@ -38,8 +39,8 @@ export class Login implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
-      username: new FormControl('', [Validators.required, Validators.minLength(4)]),
-      password: new FormControl('', [Validators.required, Validators.minLength(8)]),
+      username: new FormControl('', [ Validators.required, Validators.minLength(4) ]),
+      password: new FormControl('', [ Validators.required, Validators.minLength(8), Validators.maxLength(30), passwordValidator() ]),
       rememberMe: new FormControl(true)
     });
   }
@@ -52,7 +53,7 @@ export class Login implements OnInit {
 
     this.auth.login(username, password, rememberMe).subscribe({
       next: () => {
-        this.route.navigate(['/']);
+        this.route.navigate(['/feed']);
       },
       error: (err) => {
         if(err.status === 401)

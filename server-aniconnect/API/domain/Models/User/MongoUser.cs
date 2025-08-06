@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using System.ComponentModel.DataAnnotations;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Domain.Models.User;
@@ -11,12 +12,21 @@ public class MongoUser
 
     [BsonElement("public_id")]
     public string Code { get; set; } = string.Empty;
+    
+    
 
     [BsonElement("display")]
     public string Display { get; set; } = string.Empty; 
+    
+    [BsonElement("email")]
+    [EmailAddress]
+    public string Email { get; set; } = string.Empty;
 
     [BsonElement("name")]
     public string Name { get; set; } = string.Empty; 
+    
+    [BsonElement("bio")]
+    public string Bio { get; set; } = string.Empty;
 
     [BsonElement("lang")]
     public string Lang { get; set; } = string.Empty;
@@ -27,6 +37,10 @@ public class MongoUser
     [BsonElement("avatar")]
     [BsonIgnoreIfNull]
     public string? AvatarUrl { get; set; }
+    
+    [BsonElement("background")]
+    [BsonIgnoreIfNull]
+    public string? Background { get; set; }
 
     [BsonElement("is_private")]
     public bool IsPrivate { get; set; }

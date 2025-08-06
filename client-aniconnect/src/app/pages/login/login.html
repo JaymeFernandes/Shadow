@@ -62,13 +62,16 @@
           <i-lucide [size]="20" [img]="viewPassword() ? EyeOff : Eye"></i-lucide>
         </div>
 
-        @if (password.invalid && (password.dirty || password.touched)) {
+        @if (password?.invalid && (password?.dirty || password?.touched)) {
           <div class="text-red-400 text-sm mt-2 ml-1">
             @if (password.errors?.['required']) {
-              <div>A senha é obrigatória.</div>
+              <div>O campo é obrigatório.</div>
             }
-            @if (password.errors?.['minlength']) {
-              <div>Mínimo de 8 caracteres.</div>
+            @else if(password.errors?.["strongPassword"]) {
+              <div>Senha está insegura</div>
+            }
+            @else {
+              <div>Senha maior que o permitido</div>
             }
           </div>
         }
@@ -90,7 +93,6 @@
 
       <!-- Botão de envio -->
       <button
-
         type="submit"
         class="not-active w-full bg-indigo-600 text-white rounded-xl py-3 font-medium hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       >

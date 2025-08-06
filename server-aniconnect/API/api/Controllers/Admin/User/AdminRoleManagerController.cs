@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers.Admin;
+namespace Api.Controllers.Admin.User;
 
 [ApiController]
 [Tags("Admin")]

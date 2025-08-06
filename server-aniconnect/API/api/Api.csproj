@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="AWSSDK.S3" Version="4.0.5.1" />
     <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.5.1" />
+    <PackageReference Include="MeiliSearch" Version="0.16.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.6" />
@@ -34,9 +35,10 @@
     <PackageReference Include="OpenIddict.Server" Version="7.0.0" />
     <PackageReference Include="OpenIddict.Validation" Version="7.0.0" />
     <PackageReference Include="OpenIddict.Validation.AspNetCore" Version="7.0.0" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.5.3" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.6.8" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="9.0.0" />
     <PackageReference Include="System.Linq.Async" Version="6.0.3" />
   </ItemGroup>
 
@@ -47,7 +49,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\file\" />
+    <Folder Include="Controllers\Internal\" />
+    <Folder Include="Controllers\Public\Content\" />
   </ItemGroup>
 
   <ItemGroup>
